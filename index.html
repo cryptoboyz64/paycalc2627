@@ -40,43 +40,6 @@
             padding: 0 0 48px;
         }
 
-        /* ── Browser Banner ───────────────────────────────── */
-        #browser-banner {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: linear-gradient(135deg, rgba(255,179,71,0.15), rgba(255,130,0,0.1));
-            border-bottom: 1px solid rgba(255,179,71,0.3);
-            padding: 12px 16px;
-            font-size: 0.82rem;
-            color: #ffd080;
-            line-height: 1.4;
-        }
-
-        #browser-banner .banner-icon {
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        #browser-banner .banner-text { flex: 1; }
-
-        #browser-banner strong { color: #ffda9a; }
-
-        #dismiss-banner {
-            background: none;
-            border: none;
-            color: #ffd080;
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 4px;
-            flex-shrink: 0;
-            line-height: 1;
-            opacity: 0.7;
-            transition: opacity var(--transition);
-        }
-        #dismiss-banner:hover { opacity: 1; }
-
         /* ── Inner padding wrapper ────────────────────────── */
         .container {
             max-width: 1120px;
@@ -241,24 +204,6 @@
             box-shadow: 0 0 0 3px rgba(0,198,255,0.12);
         }
 
-        /* ── Calculate Button ─────────────────────────────── */
-        .calc-btn {
-            display: block;
-            width: 100%;
-            margin-top: 20px;
-            padding: 13px;
-            background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
-            border: none;
-            border-radius: var(--radius-sm);
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            cursor: pointer;
-            transition: opacity var(--transition), transform var(--transition);
-        }
-        .calc-btn:hover  { opacity: 0.9; }
-        .calc-btn:active { transform: scale(0.98); }
 
         .divider {
             border: none;
@@ -435,7 +380,6 @@
 
         /* ── Print ────────────────────────────────────────── */
         @media print {
-            #browser-banner { display: none; }
             body { background: #fff; color: #000; }
             .input-card { display: none; }
             .card { background: #fff; border: 1px solid #ccc; box-shadow: none; }
@@ -452,16 +396,6 @@
 </head>
 <body>
 
-<!-- ── WhatsApp / WebView Banner ── -->
-<div id="browser-banner">
-    <span class="banner-icon">&#9888;&#65039;</span>
-    <span class="banner-text">
-        <strong>Tap to open in your browser for the calculator to work.</strong>
-        On iPhone: tap the share icon &#8599; &rarr; <em>Open in Safari</em>.
-        On Android: tap the three dots &rarr; <em>Open in Chrome</em>.
-    </span>
-    <button id="dismiss-banner" aria-label="Dismiss">&times;</button>
-</div>
 
 <div class="container">
 
@@ -527,7 +461,6 @@
                 <small>Used for target net / discretionary bonus calculation</small>
             </div>
 
-            <button class="calc-btn" id="calc-btn">Calculate</button>
         </div>
 
         <!-- ── Results ── -->
@@ -630,10 +563,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        // ── Dismiss banner ────────────────────────────────
-        document.getElementById('dismiss-banner').addEventListener('click', function () {
-            document.getElementById('browser-banner').style.display = 'none';
-        });
 
         // ── Wire up inputs ────────────────────────────────
         var ids = ['units', 'rate', 'expenses', 'fee', 'premPerc', 'premBonusPerc'];
@@ -643,8 +572,6 @@
             el.addEventListener('change', calculate);
         });
 
-        // ── Calculate button fallback ─────────────────────
-        document.getElementById('calc-btn').addEventListener('click', calculate);
 
         calculate();
     });
