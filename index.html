@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Calculator 2026/27</title>
+    <style>
+        :root {
+            --primary: #00457c;
+            --secondary: #00aae4;
+            --success: #28a745;
+            --bg: #f4f7f9;
+            --text: #333;
+            --white: #ffffff;
+            --border: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { color: var(--primary); }
+
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .results-section h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 5px;
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--success);
+        }
+
+        .highlight {
+            background: #eef7ff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .warning-note {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .invalid-border {
+            border: 2px solid #dc3545 !important;
+        }
+
+        .footer-note {
+            font-size: 0.8rem;
+            color: #777;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media print {
+            .input-section { display: none; }
+            body { padding: 0; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Payroll Calculator 2026/27</h1>
+        <p>Umbrella vs. Premium Model Comparison</p>
+    </header>
+
+    <div class="grid">
+        <!-- Input Section -->
+        <div class="card input-section">
+            <div class="form-group">
+                <label for="units">Units (Hours/Days)</label>
+                <input type="number" id="units" value="40" step="0.5" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label for="rate">Rate per Unit (£)</label>
+                <input type="number" id="rate" value="25" step="0.01" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label for="expenses">Non-Billable Expenses (£)</label>
+                <input type="number" id="expenses" value="0" step="0.01" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label for="fee">Management Fee (£)</label>
+                <input type="number" id="fee" value="20" step="0.01" oninput="calculate()">
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="premPerc">Premium Salary Percentage (%)</label>
+                <input type="number" id="premPerc" value="80" step="0.1" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label for="premBonusPerc">Premium Take Home Target (%)</label>
+                <input type="number" id="premBonusPerc" value="75" step="0.1" oninput="calculate()">
+                <small>Used for target net/discretionary bonus calc</small>
+            </div>
+        </div>
+
+        <!-- Umbrella Model Section -->
+        <div class="card results-section" id="umbrella-card">
+            <h2>Umbrella Model</h2>
+            <div class="row"><span>Business Income</span><span id="u-income">£0.00</span></div>
+            <div class="row"><span>Employers NI</span><span id="u-ersni">£0.00</span></div>
+            <div class="row"><span>Apprenticeship Levy</span><span id="u-levy">£0.00</span></div>
+            <div class="row"><span>Margin</span><span id="u-fee">£0.00</span></div>
+            <div class="row"><span>Gross Pay</span><span id="u-gross">£0.00</span></div>
+            <div class="row"><span>PAYE Tax</span><span id="u-tax">£0.00</span></div>
+            <div class="row"><span>Employees NI</span><span id="u-eesni">£0.00</span></div>
+            <div class="row"><span>Expenses (Reimbursed)</span><span id="u-exp">£0.00</span></div>
+            <div class="row"><span>Net Pay</span><span id="u-net">£0.00</span></div>
+            <div id="u-nmw-warn" class="warning-note">⚠️ Below Minimum Wage (£12.71/hr)</div>
+        </div>
+
+        <!-- Premium Model Section -->
+        <div class="card results-section" id="premium-card">
+            <h2>Premium Model</h2>
+            <div class="highlight">
+                <div class="row"><span>Premium Gross</span><span id="p-income">£0.00</span></div>
+                <div class="row"><span>Premium Salary (Pre-tax)</span><span id="p-salary">£0.00</span></div>
+            </div>
+            <div class="row"><span>PAYE Tax</span><span id="p-tax">£0.00</span></div>
+            <div class="row"><span>Employees NI</span><span id="p-eesni">£0.00</span></div>
+            <div class="row"><span>Premium Bonus (Discretionary)</span><span id="p-bonus">£0.00</span></div>
+            <div class="row"><span>Premium Net</span><span id="p-net">£0.00</span></div>
+            <div id="p-nmw-warn" class="warning-note">⚠️ Implied Below Min Wage (£12.71/hr)</div>
+        </div>
+    </div>
+
+    <p class="footer-note">
+        Note: Estimates based on 2026/27 Tax Year projections. 
+        Calculations assume standard 1257L tax code. 
+        Includes Basic (20%), Higher (40%), and Additional (45%) tax bands.
+        NMW (21+) for April 2026 is £12.71/hr.
+    </p>
+</div>
+
+<script>
+    function calculate() {
+        // --- Inputs ---
+        const units = parseFloat(document.getElementById('units').value) || 0;
+        const rate = parseFloat(document.getElementById('rate').value) || 0;
+        const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+        const fee = parseFloat(document.getElementById('fee').value) || 0;
+        const premPerc = parseFloat(document.getElementById('premPerc').value) || 0;
+        const premTargetNetPerc = parseFloat(document.getElementById('premBonusPerc').value) || 0;
+
+        const totalIncome = units * rate;
+
+        // --- 2026/27 Weekly Thresholds ---
+        const NMW_RATE = 12.71;
+        const PA_WEEKLY = 12570 / 52; 
+        const BR_THRESHOLD_WEEKLY = 50270 / 52; 
+        const HR_THRESHOLD_WEEKLY = 125140 / 52; 
+
+        const ER_NI_THRESHOLD_WEEKLY = 5000 / 52;
+        const EE_NI_THRESHOLD_WEEKLY = 12570 / 52;
+        const UEL_WEEKLY = 50270 / 52; 
+        
+        const ER_NI_RATE = 0.15;
+        const EE_NI_MAIN_RATE = 0.08;
+        const EE_NI_UEL_RATE = 0.02;
+        const LEVY_RATE = 0.005;
+
+        // --- Helper Functions ---
+        function getTax(gross) {
+            let annual = gross * 52;
+            let pa = 12570;
+            // PA Taper
+            if (annual > 100000) {
+                pa = Math.max(0, 12570 - (annual - 100000) / 2);
+            }
+            let taxable = Math.max(0, annual - pa);
+            let tax = 0;
+            
+            // 20% Band
+            let basicLimit = 50270 - 12570;
+            let amountInBasic = Math.min(taxable, basicLimit);
+            tax += amountInBasic * 0.20;
+            taxable -= amountInBasic;
+
+            // 40% Band
+            if (taxable > 0) {
+                let higherLimit = 125140 - 37700;
+                let amountInHigher = Math.min(taxable, higherLimit);
+                tax += amountInHigher * 0.40;
+                taxable -= amountInHigher;
+            }
+
+            // 45% Band
+            if (taxable > 0) {
+                tax += taxable * 0.45;
+            }
+            return tax / 52;
+        }
+
+        function getEeNI(gross) {
+            if (gross <= EE_NI_THRESHOLD_WEEKLY) return 0;
+            let amountInMain = Math.min(gross, UEL_WEEKLY) - EE_NI_THRESHOLD_WEEKLY;
+            let ni = amountInMain * EE_NI_MAIN_RATE;
+            if (gross > UEL_WEEKLY) {
+                ni += (gross - UEL_WEEKLY) * EE_NI_UEL_RATE;
+            }
+            return ni;
+        }
+
+        function getErNI(gross) {
+            return Math.max(0, (gross - ER_NI_THRESHOLD_WEEKLY) * ER_NI_RATE);
+        }
+
+        // --- Umbrella Model Logic ---
+        let uGross = (totalIncome - fee + (ER_NI_THRESHOLD_WEEKLY * ER_NI_RATE)) / (1 + ER_NI_RATE + LEVY_RATE);
+        if (uGross < 0) uGross = 0;
+        
+        const uErNI = getErNI(uGross);
+        const uLevy = uGross * LEVY_RATE;
+        const uTax = getTax(uGross);
+        const uEeNI = getEeNI(uGross);
+        const uNet = (uGross - uTax - uEeNI) + expenses;
+
+        // NMW Validation
+        const uNmwOk = (units > 0) ? (uGross / units >= NMW_RATE) : true;
+        document.getElementById('u-nmw-warn').style.display = uNmwOk ? 'none' : 'block';
+        document.getElementById('umbrella-card').className = uNmwOk ? 'card results-section' : 'card results-section invalid-border';
+
+        // --- Premium Model Logic ---
+        const pSalary = totalIncome * (premPerc / 100);
+        const pTax = getTax(pSalary);
+        const pEeNI = getEeNI(pSalary);
+        const pSalaryNet = pSalary - pTax - pEeNI;
+        
+        const targetNet = totalIncome * (premTargetNetPerc / 100);
+        const pBonus = Math.max(0, targetNet - pSalaryNet);
+        const pNet = pSalaryNet + pBonus;
+
+        // Implied NMW Validation (pSalary is the equivalent gross for the units)
+        const pNmwOk = (units > 0) ? (pSalary / units >= NMW_RATE) : true;
+        document.getElementById('p-nmw-warn').style.display = pNmwOk ? 'none' : 'block';
+        document.getElementById('premium-card').className = pNmwOk ? 'card results-section' : 'card results-section invalid-border';
+
+        // --- Update UI ---
+        document.getElementById('u-income').innerText = format(totalIncome);
+        document.getElementById('u-ersni').innerText = format(uErNI);
+        document.getElementById('u-levy').innerText = format(uLevy);
+        document.getElementById('u-fee').innerText = format(fee);
+        document.getElementById('u-gross').innerText = format(uGross);
+        document.getElementById('u-tax').innerText = format(uTax);
+        document.getElementById('u-eesni').innerText = format(uEeNI);
+        document.getElementById('u-exp').innerText = format(expenses);
+        document.getElementById('u-net').innerText = format(uNet);
+
+        document.getElementById('p-income').innerText = format(totalIncome);
+        document.getElementById('p-salary').innerText = format(pSalary);
+        document.getElementById('p-tax').innerText = format(pTax);
+        document.getElementById('p-eesni').innerText = format(pEeNI);
+        document.getElementById('p-bonus').innerText = format(pBonus);
+        document.getElementById('p-net').innerText = format(pNet);
+    }
+
+    function format(num) {
+        return '£' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    // Initial calc
+    calculate();
+</script>
+
+
+</body>
+</html>
