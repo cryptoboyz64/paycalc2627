@@ -5,816 +5,454 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payroll Calculator 2026/27</title>
     <style>
-        /* ── Reset & Base ─────────────────────────────────── */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         :root {
-            --bg:           #0b0f1a;
-            --bg-card:      #111827;
-            --bg-card-alt:  #161d2e;
-            --border:       #1e2d45;
-            --accent-1:     #00c6ff;
-            --accent-2:     #0072ff;
-            --green:        #00e5a0;
-            --amber:        #ffb347;
-            --text:         #e2e8f0;
-            --text-muted:   #6b7a99;
-            --text-dim:     #94a3b8;
-            --input-bg:     #0d1424;
-            --divider:      #1e2d45;
-            --radius:       14px;
-            --radius-sm:    8px;
-            --transition:   0.2s ease;
+            --primary: #00457c;
+            --secondary: #00aae4;
+            --success: #28a745;
+            --bg: #f4f7f9;
+            --text: #333;
+            --white: #ffffff;
+            --border: #dee2e6;
         }
-
-        html { font-size: 16px; }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
-            background-image:
-                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(0,114,255,0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 80% 110%, rgba(0,198,255,0.08) 0%, transparent 55%);
             color: var(--text);
-            min-height: 100vh;
-            padding: 0 0 48px;
+            margin: 0;
+            padding: 20px;
         }
 
-        /* ── Container ────────────────────────────────────── */
         .container {
-            max-width: 1120px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 24px 16px 0;
         }
 
-        /* ── Header ───────────────────────────────────────── */
         header {
             text-align: center;
-            margin-bottom: 36px;
-            padding: 0 8px;
+            margin-bottom: 30px;
         }
 
-        .header-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, rgba(0,198,255,0.15), rgba(0,114,255,0.15));
-            border: 1px solid rgba(0,198,255,0.3);
-            color: var(--accent-1);
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 999px;
-            margin-bottom: 14px;
-        }
+        h1 { color: var(--primary); }
 
-        header h1 {
-            font-size: clamp(1.6rem, 5vw, 2.4rem);
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, var(--accent-1) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            letter-spacing: 0.02em;
-        }
-
-        /* ── Main Grid ────────────────────────────────────── */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 340px 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-
-        /* ── Cards ────────────────────────────────────────── */
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color var(--transition);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(135deg, rgba(255,255,255,0.025) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .card:hover { border-color: rgba(0,198,255,0.25); }
-
-        .card-title {
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--text-muted);
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .card-title::before {
-            content: '';
-            display: block;
-            width: 6px;
-            height: 6px;
-            background: var(--accent-1);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-1);
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
-        /* ── Input Section ────────────────────────────────── */
-        .input-card { position: sticky; top: 16px; }
-
-        .form-group { margin-bottom: 16px; }
-        .form-group:last-of-type { margin-bottom: 0; }
+        .form-group {
+            margin-bottom: 15px;
+        }
 
         label {
             display: block;
-            font-size: 0.8rem;
+            margin-bottom: 5px;
             font-weight: 600;
-            color: var(--text-dim);
-            margin-bottom: 7px;
-            letter-spacing: 0.02em;
         }
 
-        .input-wrapper { position: relative; }
-
-        .input-prefix {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 600;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .input-suffix {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        input[type="number"] {
+        input {
             width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--divider);
-            border-radius: var(--radius-sm);
-            color: var(--text);
-            font-size: 1rem;
-            font-family: inherit;
-            padding: 12px 36px 12px 28px;
-            outline: none;
-            transition: border-color var(--transition), box-shadow var(--transition);
-            -moz-appearance: textfield;
-            min-height: 46px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
         }
 
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-
-        input[type="number"]:focus {
-            border-color: var(--accent-1);
-            box-shadow: 0 0 0 3px rgba(0,198,255,0.12);
+        .results-section h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 5px;
+            margin-top: 0;
+            color: var(--primary);
         }
 
-        .divider {
-            border: none;
-            border-top: 1px solid var(--divider);
-            margin: 20px 0;
-        }
-
-        small {
-            display: block;
-            margin-top: 5px;
-            font-size: 0.72rem;
-            color: var(--text-muted);
-        }
-
-        /* ── Results Grid ─────────────────────────────────── */
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        /* ── Result Cards ─────────────────────────────────── */
-        .result-card-umbrella { border-color: rgba(0,198,255,0.2); }
-        .result-card-premium  { border-color: rgba(0,229,160,0.2); }
-
-        .result-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .result-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .result-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-
-        .icon-blue  { background: rgba(0,198,255,0.12); }
-        .icon-green { background: rgba(0,229,160,0.12); }
-
-        /* ── Part Headers ─────────────────────────────────── */
-        .part-header {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--divider);
-            padding-bottom: 6px;
-            margin: 18px 0 10px;
-        }
-
-        /* ── Data Rows ────────────────────────────────────── */
-        .data-row {
+        .row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--divider);
-            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .data-row:last-child { border-bottom: none; }
-
-        .data-label {
-            font-size: 0.82rem;
-            color: var(--text-dim);
-            flex: 1;
-            min-width: 0;
+        .row:last-child {
+            border-bottom: none;
         }
 
-        .data-value {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text);
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums;
+        .net-row {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--success);
         }
 
-        .data-value.deduction { color: #f87171; }
-        .data-value.neutral   { color: var(--amber); }
-        .data-value.company   { color: var(--accent-1); }
-        .data-value.worker    { color: var(--green); }
-        .data-value.dim       { color: var(--text-muted); font-size: 0.82rem; font-weight: 500; }
-
-        /* ── Highlight Block ──────────────────────────────── */
-        .highlight-block {
-            background: var(--bg-card-alt);
-            border: 1px solid var(--divider);
-            border-radius: var(--radius-sm);
-            padding: 12px 14px;
+        .highlight {
+            background: #eef7ff;
+            padding: 10px;
+            border-radius: 4px;
             margin-bottom: 10px;
         }
 
-        .highlight-block .data-row { padding: 7px 0; }
-        .highlight-block .data-row:last-child { border-bottom: none; }
-
-        /* ── Net Pay Row ──────────────────────────────────── */
-        .net-row {
-            margin-top: 8px;
-            padding: 12px 14px;
-            border-radius: var(--radius-sm);
-            border-bottom: none !important;
-        }
-
-        .net-row-umbrella {
-            background: linear-gradient(135deg, rgba(0,198,255,0.08), rgba(0,114,255,0.06));
-            border: 1px solid rgba(0,198,255,0.2);
-        }
-
-        .net-row-premium {
-            background: linear-gradient(135deg, rgba(0,229,160,0.08), rgba(0,180,120,0.05));
-            border: 1px solid rgba(0,229,160,0.2);
-        }
-
-        .net-label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-dim);
-        }
-
-        .net-value-umbrella {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: var(--accent-1);
-            text-shadow: 0 0 12px rgba(0,198,255,0.4);
-        }
-
-        .net-value-premium {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: var(--green);
-            text-shadow: 0 0 12px rgba(0,229,160,0.4);
-        }
-
-        /* ── Alert Notes ──────────────────────────────────── */
-        .alert-note {
+        .warning-note {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
             display: none;
-            margin-top: 12px;
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 0.8rem;
+            padding: 8px;
+            background: #ffe6e6;
+            border-left: 4px solid #dc3545;
+        }
+
+        .success-note {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+            padding: 8px;
+            background: #e6ffed;
+            border-left: 4px solid var(--success);
+        }
+
+        .company-blue {
             font-weight: 600;
-            line-height: 1.5;
+            color: var(--primary);
         }
 
-        .alert-note.warn {
-            background: rgba(248,113,113,0.1);
-            border: 1px solid rgba(248,113,113,0.35);
-            color: #fca5a5;
+        .worker-green {
+            font-weight: 600;
+            color: var(--success);
         }
 
-        .alert-note.success {
-            background: rgba(0,229,160,0.08);
-            border: 1px solid rgba(0,229,160,0.25);
-            color: var(--green);
+        .part-header {
+            font-size: 1rem;
+            margin: 20px 0 5px 0;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
         }
 
-        .card-invalid { border-color: rgba(248,113,113,0.5) !important; }
+        .invalid-border {
+            border: 2px solid #dc3545 !important;
+        }
 
-        /* ── Footer ───────────────────────────────────────── */
         .footer-note {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+            font-size: 0.8rem;
+            color: #777;
             text-align: center;
-            margin-top: 28px;
-            line-height: 1.7;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 8px;
+            margin-top: 20px;
         }
 
-        /* ── Responsive ───────────────────────────────────── */
-        @media (max-width: 900px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .input-card { position: static; }
-            .results-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 480px) {
-            body { padding-bottom: 40px; }
-            .container { padding: 16px 12px 0; }
-            .card { padding: 18px 16px; }
-            header h1 { font-size: 1.5rem; }
-            .net-value-umbrella,
-            .net-value-premium { font-size: 1rem; }
-        }
-
-        /* ── Print ────────────────────────────────────────── */
         @media print {
-            body { background: #fff; color: #000; }
-            .input-card { display: none; }
-            .card { background: #fff; border: 1px solid #ccc; box-shadow: none; }
-            .card::before { display: none; }
-            header h1 { -webkit-text-fill-color: #000; color: #000; }
-            .data-value,
-            .net-value-umbrella,
-            .net-value-premium { color: #000 !important; text-shadow: none; }
-            .highlight-block { background: #f5f5f5; }
-            .net-row-umbrella,
-            .net-row-premium  { background: #eee; }
+            .input-section { display: none; }
+            body { padding: 0; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-
     <header>
-        <div class="header-badge">Tax Year 2026 / 27</div>
-        <h1>Payroll Calculator</h1>
-        <p>Umbrella vs. Premium Model &mdash; Side-by-Side Comparison</p>
+        <h1>Payroll Calculator 2026/27</h1>
+        <p>Umbrella vs. Premium Model Comparison</p>
     </header>
 
-    <div class="main-grid">
-
-        <!-- ── Input Section ── -->
-        <div class="card input-card">
-            <div class="card-title">Inputs</div>
-
+    <div class="grid">
+        <!-- Input Section -->
+        <div class="card input-section">
             <div class="form-group">
-                <label for="units">Units (Hours / Days)</label>
-                <div class="input-wrapper">
-                    <input type="number" id="units" value="40" step="0.5" inputmode="decimal">
-                </div>
+                <label for="units">Units (Hours/Days)</label>
+                <input type="number" id="units" value="40" step="0.5" oninput="calculate()">
             </div>
-
             <div class="form-group">
-                <label for="rate">Rate per Unit</label>
-                <div class="input-wrapper">
-                    <span class="input-prefix">£</span>
-                    <input type="number" id="rate" value="25" step="0.01" inputmode="decimal">
-                </div>
+                <label for="rate">Rate per Unit (£)</label>
+                <input type="number" id="rate" value="25" step="0.01" oninput="calculate()">
             </div>
-
             <div class="form-group">
-                <label for="expenses">Non-Billable Expenses</label>
-                <div class="input-wrapper">
-                    <span class="input-prefix">£</span>
-                    <input type="number" id="expenses" value="0" step="0.01" inputmode="decimal">
-                </div>
+                <label for="expenses">Non-Billable Expenses (£)</label>
+                <input type="number" id="expenses" value="0" step="0.01" oninput="calculate()">
             </div>
-
             <div class="form-group">
-                <label for="fee">Management Fee</label>
-                <div class="input-wrapper">
-                    <span class="input-prefix">£</span>
-                    <input type="number" id="fee" value="20" step="0.01" inputmode="decimal">
-                </div>
+                <label for="fee">Management Fee (£)</label>
+                <input type="number" id="fee" value="20" step="0.01" oninput="calculate()">
             </div>
-
-            <hr class="divider">
-
+            <hr>
             <div class="form-group">
-                <label for="premPerc">Premium Salary Percentage</label>
-                <div class="input-wrapper">
-                    <input type="number" id="premPerc" value="80" step="0.1" inputmode="decimal">
-                    <span class="input-suffix">%</span>
-                </div>
+                <label for="premPerc">Premium Salary Percentage (%)</label>
+                <input type="number" id="premPerc" value="80" step="0.1" oninput="calculate()">
             </div>
-
             <div class="form-group">
-                <label for="premBonusPerc">Premium Take Home Target</label>
-                <div class="input-wrapper">
-                    <input type="number" id="premBonusPerc" value="71" step="0.1" inputmode="decimal">
-                    <span class="input-suffix">%</span>
-                </div>
-                <small>Used for target net / discretionary bonus calculation</small>
+                <label for="premBonusPerc">Premium Take Home Target (%)</label>
+                <input type="number" id="premBonusPerc" value="71" step="0.1" oninput="calculate()">
+                <small>Used for target net/discretionary bonus calc</small>
             </div>
         </div>
 
-        <!-- ── Results ── -->
-        <div class="results-grid">
+        <!-- Umbrella Model Section -->
+        <div class="card results-section" id="umbrella-card">
+            <h2>Umbrella Model</h2>
+            <div class="row"><span>Business Income</span><span id="u-income">£0.00</span></div>
+            <div class="row company-blue"><span>Margin</span><span id="u-fee">£0.00</span></div>
+            <div class="row" style="visibility:hidden"><span>-</span><span>-</span></div> <!-- Spacer for Provider Retention -->
+            <div class="row"><span>Employers NI</span><span id="u-ersni">£0.00</span></div>
+            <div class="row"><span>Apprenticeship Levy</span><span id="u-levy">£0.00</span></div>
+            <div class="highlight">
+                <div class="row"><span>Taxable Gross</span><span id="u-gross">£0.00</span></div>
+                <div class="row"><span>PAYE Tax</span><span id="u-tax">£0.00</span></div>
+                <div class="row"><span>Employees NI</span><span id="u-eesni">£0.00</span></div>
+            </div>
+            <div class="row"><span>Expenses (Reimbursed)</span><span id="u-exp">£0.00</span></div>
+            <div class="row net-row"><span>Net Pay</span><span id="u-net">£0.00</span></div>
+            <div class="row" style="font-size: 0.9rem; color: #555;"><span>Net / Income %</span><span id="u-ret-perc">0.0%</span></div>
+            <div id="u-nmw-warn" class="warning-note">⚠️ Below Minimum Wage (£12.71/hr)</div>
+        </div>
 
-            <!-- ── Umbrella Model ── -->
-            <div class="card result-card-umbrella" id="umbrella-card">
-                <div class="result-header">
-                    <span class="result-title">Umbrella Model</span>
-                    <div class="result-icon icon-blue">&#9679;</div>
-                </div>
+        <!-- Premium Model Section -->
+        <div class="card results-section" id="premium-card">
+            <h2>Premium Model</h2>
+            
+            <div class="row"><span>Premium Gross</span><span id="p-income">£0.00</span></div>
+            <div class="row"><span>Premium Salary Percentage</span><span id="p-salary-perc-display">0.0%</span></div>
+            <div class="row"><span>Premium Salary (Pre tax)</span><span id="p-salary-header">£0.00</span></div>
+            <div class="row"><span>Apprenticeship Levy</span><span id="p-levy">£0.00</span></div>
 
-                <div class="data-row">
-                    <span class="data-label">Business Income</span>
-                    <span class="data-value" id="u-income">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Margin</span>
-                    <span class="data-value company" id="u-fee">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Employers NI (15% &gt; £5k)</span>
-                    <span class="data-value deduction" id="u-ersni">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Apprenticeship Levy (0.5%)</span>
-                    <span class="data-value deduction" id="u-levy">£0.00</span>
-                </div>
-
-                <div class="highlight-block">
-                    <div class="data-row">
-                        <span class="data-label">Taxable Gross</span>
-                        <span class="data-value" id="u-gross">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">PAYE Tax</span>
-                        <span class="data-value deduction" id="u-tax">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Employees NI</span>
-                        <span class="data-value deduction" id="u-eesni">£0.00</span>
-                    </div>
-                </div>
-
-                <div class="data-row">
-                    <span class="data-label">Expenses (Reimbursed)</span>
-                    <span class="data-value neutral" id="u-exp">£0.00</span>
-                </div>
-                <div class="data-row net-row net-row-umbrella">
-                    <span class="net-label">Net Pay</span>
-                    <span class="net-value-umbrella" id="u-net">£0.00</span>
-                </div>
-                <div class="data-row" style="border-bottom:none; padding-top:6px;">
-                    <span class="data-label" style="font-size:0.78rem;">Net / Income %</span>
-                    <span class="data-value dim" id="u-ret-perc">0.0%</span>
-                </div>
-
-                <div id="u-nmw-warn" class="alert-note warn">&#9888; Below Minimum Wage (£12.71/hr)</div>
+            <h3 class="part-header">Part 1 – Payslip Calculation</h3>
+            <div class="highlight">
+                <div class="row"><span>Gross Pay</span><span id="p-salary">£0.00</span></div>
+                <div class="row"><span>Holiday Pay</span><span id="p-hol">£0.00</span></div>
+                <div class="row"><span>PAYE Tax</span><span id="p-tax">£0.00</span></div>
+                <div class="row"><span>Employees NI</span><span id="p-eesni">£0.00</span></div>
+                <div class="row worker-green"><span>Premium Expenses</span><span id="p-exp">£0.00</span></div>
+                <div class="row worker-green"><span>Salary Net</span><span id="p-salary-net">£0.00</span></div>
             </div>
 
-            <!-- ── Premium Model ── -->
-            <div class="card result-card-premium" id="premium-card">
-                <div class="result-header">
-                    <span class="result-title">Premium Model</span>
-                    <div class="result-icon icon-green">&#9679;</div>
-                </div>
+            <h3 class="part-header">Part 2 – Receipts & Statutory</h3>
+            <div class="row"><span>Premium Employers NI</span><span id="p-ersni">£0.00</span></div>
+            <div class="row company-blue"><span>Premium Fee</span><span id="p-fee">£0.00</span></div>
+            <div class="row"><span>Non-Billable Expenses</span><span id="p-nonbill-exp">£0.00</span></div>
+            <div class="row company-blue"><span>Provider Retention</span><span id="p-retention">£0.00</span></div>
 
-                <div class="data-row">
-                    <span class="data-label">Premium Gross</span>
-                    <span class="data-value" id="p-income">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Premium Salary Percentage</span>
-                    <span class="data-value dim" id="p-salary-perc-display">0.0%</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Premium Salary (Pre-tax)</span>
-                    <span class="data-value" id="p-salary-header">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Apprenticeship Levy (0.5%)</span>
-                    <span class="data-value deduction" id="p-levy">£0.00</span>
-                </div>
-
-                <div class="part-header">Part 1 &ndash; Payslip Calculation</div>
-                <div class="highlight-block">
-                    <div class="data-row">
-                        <span class="data-label">Gross Pay</span>
-                        <span class="data-value" id="p-salary">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Holiday Pay</span>
-                        <span class="data-value" id="p-hol">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">PAYE Tax</span>
-                        <span class="data-value deduction" id="p-tax">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Employees NI</span>
-                        <span class="data-value deduction" id="p-eesni">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Premium Expenses</span>
-                        <span class="data-value worker" id="p-exp">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Salary Net</span>
-                        <span class="data-value worker" id="p-salary-net">£0.00</span>
-                    </div>
-                </div>
-
-                <div class="part-header">Part 2 &ndash; Receipts &amp; Statutory</div>
-                <div class="data-row">
-                    <span class="data-label">Premium Employers NI</span>
-                    <span class="data-value deduction" id="p-ersni">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Premium Fee</span>
-                    <span class="data-value company" id="p-fee">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Non-Billable Expenses</span>
-                    <span class="data-value neutral" id="p-nonbill-exp">£0.00</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Provider Retention</span>
-                    <span class="data-value company" id="p-retention">£0.00</span>
-                </div>
-
-                <div class="part-header">Part 3 &ndash; Taxable Discretionary Bonus</div>
-                <div class="highlight-block">
-                    <div class="data-row">
-                        <span class="data-label">Take Home Percentage</span>
-                        <span class="data-value dim" id="p-target-perc-display">0.0%</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Premium Target Net</span>
-                        <span class="data-value" id="p-target-net">£0.00</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Premium Bonus</span>
-                        <span class="data-value worker" id="p-bonus">£0.00</span>
-                    </div>
-                </div>
-
-                <div class="data-row net-row net-row-premium">
-                    <span class="net-label">Total Premium Net</span>
-                    <span class="net-value-premium" id="p-net">£0.00</span>
-                </div>
-                <div class="data-row" style="border-bottom:none; padding-top:6px;">
-                    <span class="data-label" style="font-size:0.78rem;">Net / Income %</span>
-                    <span class="data-value dim" id="p-ret-perc">0.0%</span>
-                </div>
-
-                <div id="p-nmw-warn"     class="alert-note warn"></div>
-                <div id="p-surplus-warn" class="alert-note warn"></div>
-                <div id="p-nmw-success"  class="alert-note success"></div>
+            <h3 class="part-header">Part 3 – Taxable Discretionary Bonus</h3>
+            <div class="highlight">
+                <div class="row"><span>Take Home Percentage</span><span id="p-target-perc-display">0.0%</span></div>
+                <div class="row"><span>Premium Target Net</span><span id="p-target-net">£0.00</span></div>
+                <div class="row worker-green"><span>Premium Bonus</span><span id="p-bonus">£0.00</span></div>
             </div>
 
-        </div><!-- /.results-grid -->
-    </div><!-- /.main-grid -->
+            <div class="row net-row"><span>Total Premium Net</span><span id="p-net">£0.00</span></div>
+            <div class="row" style="font-size: 0.9rem; color: #555;"><span>Net / Income %</span><span id="p-ret-perc">0.0%</span></div>
+            
+            <div id="p-nmw-warn" class="warning-note"></div>
+            <div id="p-surplus-warn" class="warning-note"></div>
+            <div id="p-nmw-success" class="success-note"></div>
+        </div>
+    </div>
 
     <p class="footer-note">
-        Estimates based on 2026/27 Tax Year projections (England &amp; Northern Ireland).
-        Assumes standard 1257L tax code. Includes Basic (20%), Higher (40%), and Additional (45%) tax bands with PA taper above £100k.
-        Employer NI at 15% above £5,000 pa &bull; Employee NI at 8% (2% above UEL) &bull; NMW (21+) April 2026: £12.71/hr.
+        Note: Estimates based on 2026/27 Tax Year projections. 
+        Calculations assume standard 1257L tax code. 
+        Includes Basic (20%), Higher (40%), and Additional (45%) tax bands.
+        NMW (21+) for April 2026 is £12.71/hr.
     </p>
-
-</div><!-- /.container -->
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var ids = ['units', 'rate', 'expenses', 'fee', 'premPerc', 'premBonusPerc'];
-        ids.forEach(function (id) {
-            var el = document.getElementById(id);
-            el.addEventListener('input',  calculate);
-            el.addEventListener('change', calculate);
-        });
-        calculate();
-    });
-
-    // ── 2026/27 constants ─────────────────────────────────
-    var NMW_RATE               = 12.71;
-    var ER_NI_THRESHOLD_WEEKLY = 5000  / 52;
-    var EE_NI_THRESHOLD_WEEKLY = 12570 / 52;
-    var UEL_WEEKLY             = 50270 / 52;
-    var ER_NI_RATE             = 0.15;
-    var EE_NI_MAIN_RATE        = 0.08;
-    var EE_NI_UEL_RATE         = 0.02;
-    var LEVY_RATE              = 0.005;
-
-    function getTax(weeklyGross) {
-        var annual  = weeklyGross * 52;
-        var pa      = annual > 100000 ? Math.max(0, 12570 - (annual - 100000) / 2) : 12570;
-        var taxable = Math.max(0, annual - pa);
-        var tax     = 0;
-        var basic   = Math.min(taxable, 37700);
-        tax    += basic * 0.20;
-        taxable -= basic;
-        if (taxable > 0) {
-            var higher = Math.min(taxable, 125140 - 50270);
-            tax    += higher * 0.40;
-            taxable -= higher;
-        }
-        if (taxable > 0) tax += taxable * 0.45;
-        return tax / 52;
-    }
-
-    function getEeNI(weeklyGross) {
-        if (weeklyGross <= EE_NI_THRESHOLD_WEEKLY) return 0;
-        var main  = (Math.min(weeklyGross, UEL_WEEKLY) - EE_NI_THRESHOLD_WEEKLY) * EE_NI_MAIN_RATE;
-        var upper = weeklyGross > UEL_WEEKLY ? (weeklyGross - UEL_WEEKLY) * EE_NI_UEL_RATE : 0;
-        return main + upper;
-    }
-
-    function getErNI(weeklyGross) {
-        return Math.max(0, (weeklyGross - ER_NI_THRESHOLD_WEEKLY) * ER_NI_RATE);
-    }
-
     function calculate() {
-        var units             = parseFloat(document.getElementById('units').value)         || 0;
-        var rate              = parseFloat(document.getElementById('rate').value)          || 0;
-        var expenses          = parseFloat(document.getElementById('expenses').value)      || 0;
-        var fee               = parseFloat(document.getElementById('fee').value)           || 0;
-        var premPerc          = parseFloat(document.getElementById('premPerc').value)      || 0;
-        var premTargetNetPerc = parseFloat(document.getElementById('premBonusPerc').value) || 0;
+        // --- Inputs ---
+        const units = parseFloat(document.getElementById('units').value) || 0;
+        const rate = parseFloat(document.getElementById('rate').value) || 0;
+        const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+        const fee = parseFloat(document.getElementById('fee').value) || 0;
+        const premPerc = parseFloat(document.getElementById('premPerc').value) || 0;
+        const premTargetNetPerc = parseFloat(document.getElementById('premBonusPerc').value) || 0;
 
-        var totalIncome = units * rate;
+        const totalIncome = units * rate;
 
-        // ── Umbrella ──────────────────────────────────────
-        var uGross = (totalIncome - fee + (ER_NI_THRESHOLD_WEEKLY * ER_NI_RATE)) / (1 + ER_NI_RATE + LEVY_RATE);
-        if (uGross < 0) uGross = 0;
+        // --- 2026/27 Weekly Thresholds ---
+        const NMW_RATE = 12.71;
+        const PA_WEEKLY = 12570 / 52; 
+        const BR_THRESHOLD_WEEKLY = 50270 / 52; 
+        const HR_THRESHOLD_WEEKLY = 125140 / 52; 
 
-        var uErNI = getErNI(uGross);
-        var uLevy = uGross * LEVY_RATE;
-        var uTax  = getTax(uGross);
-        var uEeNI = getEeNI(uGross);
-        var uNet  = (uGross - uTax - uEeNI) + expenses;
-        var uRetPerc = totalIncome > 0 ? (uNet / totalIncome) * 100 : 0;
+        const ER_NI_THRESHOLD_WEEKLY = 5000 / 52;
+        const EE_NI_THRESHOLD_WEEKLY = 12570 / 52;
+        const UEL_WEEKLY = 50270 / 52; 
+        
+        const ER_NI_RATE = 0.15;
+        const EE_NI_MAIN_RATE = 0.08;
+        const EE_NI_UEL_RATE = 0.02;
+        const LEVY_RATE = 0.005;
 
-        var uNmwOk = units > 0 ? (uGross / units >= NMW_RATE) : true;
-        document.getElementById('u-nmw-warn').style.display = uNmwOk ? 'none' : 'block';
-        document.getElementById('umbrella-card').classList.toggle('card-invalid', !uNmwOk);
+        // --- Helper Functions ---
+        function getTax(gross) {
+            let annual = gross * 52;
+            let pa = 12570;
+            // PA Taper
+            if (annual > 100000) {
+                pa = Math.max(0, 12570 - (annual - 100000) / 2);
+            }
+            let taxable = Math.max(0, annual - pa);
+            let tax = 0;
+            
+            // 20% Band
+            let basicLimit = 50270 - 12570;
+            let amountInBasic = Math.min(taxable, basicLimit);
+            tax += amountInBasic * 0.20;
+            taxable -= amountInBasic;
 
-        // ── Premium ───────────────────────────────────────
-        var pSalary    = totalIncome * (premPerc / 100);
-        var pErNI      = getErNI(pSalary);
-        var pLevy      = pSalary * LEVY_RATE;
-        var pTax       = getTax(pSalary);
-        var pEeNI      = getEeNI(pSalary);
-        var pSalaryNet = pSalary - pTax - pEeNI + expenses;
-        var targetNet  = totalIncome * (premTargetNetPerc / 100);
-        var pBonus     = Math.max(0, targetNet - pSalaryNet);
-        var pNet       = pSalaryNet + pBonus;
-        var pSurplus   = totalIncome - fee - pSalary - pErNI - pLevy;
-        var pRetention = pSurplus - pBonus;
-        var pRetPerc   = totalIncome > 0 ? (pNet / totalIncome) * 100 : 0;
+            // 40% Band
+            if (taxable > 0) {
+                let higherLimit = 125140 - 37700;
+                let amountInHigher = Math.min(taxable, higherLimit);
+                tax += amountInHigher * 0.40;
+                taxable -= amountInHigher;
+            }
 
-        // NMW check
-        var reqSalary  = units * NMW_RATE;
-        var minSalPerc = totalIncome > 0 ? Math.ceil((reqSalary / totalIncome) * 10000) / 100 : 0;
-
-        if (units > 0 && pSalary < reqSalary) {
-            setNote('p-nmw-warn',    '⚠ Below Minimum Wage. Set Premium Salary Percentage to at least ' + minSalPerc + '% to correct.', true);
-            setNote('p-nmw-success', '', false);
-        } else if (units > 0 && pSalary > reqSalary) {
-            setNote('p-nmw-warn',    '', false);
-            setNote('p-nmw-success', '✓ Above Minimum Wage. You can lower Premium Salary Percentage to ' + minSalPerc + '% to save on taxes.', true);
-        } else {
-            setNote('p-nmw-warn',    '', false);
-            setNote('p-nmw-success', '', false);
+            // 45% Band
+            if (taxable > 0) {
+                tax += taxable * 0.45;
+            }
+            return tax / 52;
         }
 
-        // Surplus check
-        var maxNet     = pSalaryNet + Math.max(0, pSurplus);
-        var maxNetPerc = totalIncome > 0 ? Math.floor((maxNet / totalIncome) * 10000) / 100 : 0;
+        function getEeNI(gross) {
+            if (gross <= EE_NI_THRESHOLD_WEEKLY) return 0;
+            let amountInMain = Math.min(gross, UEL_WEEKLY) - EE_NI_THRESHOLD_WEEKLY;
+            let ni = amountInMain * EE_NI_MAIN_RATE;
+            if (gross > UEL_WEEKLY) {
+                ni += (gross - UEL_WEEKLY) * EE_NI_UEL_RATE;
+            }
+            return ni;
+        }
+
+        function getErNI(gross) {
+            return Math.max(0, (gross - ER_NI_THRESHOLD_WEEKLY) * ER_NI_RATE);
+        }
+
+        // --- Umbrella Model Logic ---
+        let uGross = (totalIncome - fee + (ER_NI_THRESHOLD_WEEKLY * ER_NI_RATE)) / (1 + ER_NI_RATE + LEVY_RATE);
+        if (uGross < 0) uGross = 0;
+        
+        const uErNI = getErNI(uGross);
+        const uLevy = uGross * LEVY_RATE;
+        const uTax = getTax(uGross);
+        const uEeNI = getEeNI(uGross);
+        const uNet = (uGross - uTax - uEeNI) + expenses;
+
+        // NMW Validation
+        const uNmwOk = (units > 0) ? (uGross / units >= NMW_RATE) : true;
+        document.getElementById('u-nmw-warn').style.display = uNmwOk ? 'none' : 'block';
+        document.getElementById('umbrella-card').className = uNmwOk ? 'card results-section' : 'card results-section invalid-border';
+
+        // --- Premium Model Logic ---
+        const pSalary = totalIncome * (premPerc / 100);
+        const pHoliday = 0; 
+        const pGrossPay = pSalary; 
+        
+        const pErNI = getErNI(pSalary);
+        const pLevy = pSalary * LEVY_RATE;
+        const pTax = getTax(pSalary);
+        const pEeNI = getEeNI(pSalary);
+        
+        const pSalaryNet = pSalary - pTax - pEeNI + expenses;
+        
+        const targetNet = totalIncome * (premTargetNetPerc / 100);
+        const pBonus = Math.max(0, targetNet - pSalaryNet);
+        const pNet = pSalaryNet + pBonus;
+
+        const pSurplus = totalIncome - fee - pSalary - pErNI - pLevy;
+        const pRetention = pSurplus - pBonus;
+
+        // --- Dial-In Validation Checks ---
+        const reqSalary = units * NMW_RATE;
+        const minSalPerc = totalIncome > 0 ? Math.ceil((reqSalary / totalIncome) * 10000)/100 : 0;
+        
+        if (units > 0 && pSalary < reqSalary) {
+            document.getElementById('p-nmw-warn').innerText = `⚠️ Below Minimum Wage. Set 'Premium Salary Percentage' to at least ${minSalPerc}% to correct.`;
+            document.getElementById('p-nmw-warn').style.display = 'block';
+            document.getElementById('p-nmw-success').style.display = 'none';
+        } else if (units > 0 && pSalary > reqSalary) {
+            document.getElementById('p-nmw-warn').style.display = 'none';
+            document.getElementById('p-nmw-success').innerText = `✅ Above Minimum Wage. You can lower 'Premium Salary Percentage' to ${minSalPerc}% to save on taxes.`;
+            document.getElementById('p-nmw-success').style.display = 'block';
+        } else {
+            document.getElementById('p-nmw-warn').style.display = 'none';
+            document.getElementById('p-nmw-success').style.display = 'none';
+        }
+
+        const maxNet = pSalaryNet + Math.max(0, pSurplus);
+        const maxNetPerc = totalIncome > 0 ? Math.floor((maxNet / totalIncome) * 10000)/100 : 0;
 
         if (pRetention < 0) {
-            setNote('p-surplus-warn', '⚠ Pre-Tax Surplus is less than zero. Set Premium Take Home Target to a maximum of ' + maxNetPerc + '% to correct.', true);
-            document.getElementById('premium-card').classList.add('card-invalid');
+            document.getElementById('p-surplus-warn').innerText = `⚠️ Pre Tax Surplus is less than zero. Set 'Premium Take Home Target' to a maximum of ${maxNetPerc}% to correct.`;
+            document.getElementById('p-surplus-warn').style.display = 'block';
+            document.getElementById('premium-card').className = 'card results-section invalid-border';
         } else {
-            setNote('p-surplus-warn', '', false);
-            document.getElementById('premium-card').classList.remove('card-invalid');
+            document.getElementById('p-surplus-warn').style.display = 'none';
+            document.getElementById('premium-card').className = 'card results-section';
         }
 
-        // ── Update DOM ────────────────────────────────────
-        setText('u-income',   totalIncome);
-        setText('u-fee',      fee);
-        setText('u-ersni',    uErNI);
-        setText('u-levy',     uLevy);
-        setText('u-gross',    uGross);
-        setText('u-tax',      uTax);
-        setText('u-eesni',    uEeNI);
-        setText('u-exp',      expenses);
-        setText('u-net',      uNet);
-        document.getElementById('u-ret-perc').textContent = uRetPerc.toFixed(1) + '%';
+        // --- Percentage Calculations ---
+        const uRetPerc = totalIncome > 0 ? (uNet / totalIncome) * 100 : 0;
+        const pRetPerc = totalIncome > 0 ? (pNet / totalIncome) * 100 : 0;
 
-        setText('p-income',        totalIncome);
-        setText('p-salary-header', pSalary);
-        setText('p-levy',          pLevy);
-        setText('p-salary',        pSalary);
-        setText('p-hol',           0);
-        setText('p-tax',           pTax);
-        setText('p-eesni',         pEeNI);
-        setText('p-exp',           expenses);
-        setText('p-salary-net',    pSalaryNet);
-        setText('p-ersni',         pErNI);
-        setText('p-fee',           fee);
-        setText('p-nonbill-exp',   expenses);
-        setText('p-retention',     pRetention);
-        setText('p-target-net',    targetNet);
-        setText('p-bonus',         pBonus);
-        setText('p-net',           pNet);
-        document.getElementById('p-salary-perc-display').textContent  = premPerc.toFixed(1) + '%';
-        document.getElementById('p-target-perc-display').textContent  = premTargetNetPerc.toFixed(1) + '%';
-        document.getElementById('p-ret-perc').textContent             = pRetPerc.toFixed(1) + '%';
+        // --- Update UI ---
+        document.getElementById('u-income').innerText = format(totalIncome);
+        document.getElementById('u-ersni').innerText = format(uErNI);
+        document.getElementById('u-levy').innerText = format(uLevy);
+        document.getElementById('u-fee').innerText = format(fee);
+        document.getElementById('u-gross').innerText = format(uGross);
+        document.getElementById('u-tax').innerText = format(uTax);
+        document.getElementById('u-eesni').innerText = format(uEeNI);
+        document.getElementById('u-exp').innerText = format(expenses);
+        document.getElementById('u-net').innerText = format(uNet);
+        document.getElementById('u-ret-perc').innerText = uRetPerc.toFixed(1) + '%';
+
+        // Premium Section Updates
+        document.getElementById('p-income').innerText = format(totalIncome);
+        document.getElementById('p-salary-perc-display').innerText = premPerc.toFixed(1) + '%';
+        document.getElementById('p-salary-header').innerText = format(pSalary);
+        document.getElementById('p-levy').innerText = format(pLevy);
+        
+        document.getElementById('p-salary').innerText = format(pGrossPay);
+        document.getElementById('p-hol').innerText = format(pHoliday);
+        document.getElementById('p-tax').innerText = format(pTax);
+        document.getElementById('p-eesni').innerText = format(pEeNI);
+        document.getElementById('p-exp').innerText = format(expenses);
+        document.getElementById('p-salary-net').innerText = format(pSalaryNet);
+        
+        document.getElementById('p-ersni').innerText = format(pErNI);
+        document.getElementById('p-fee').innerText = format(fee);
+        document.getElementById('p-nonbill-exp').innerText = format(expenses);
+        document.getElementById('p-retention').innerText = format(pRetention);
+        
+        document.getElementById('p-target-perc-display').innerText = premTargetNetPerc.toFixed(1) + '%';
+        document.getElementById('p-target-net').innerText = format(targetNet);
+        document.getElementById('p-bonus').innerText = format(pBonus);
+        
+        document.getElementById('p-net').innerText = format(pNet);
+        document.getElementById('p-ret-perc').innerText = pRetPerc.toFixed(1) + '%';
     }
 
-    function setText(id, num) {
-        var el = document.getElementById(id);
-        if (el) el.textContent = fmt(num);
+    function format(num) {
+        return '£' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    function setNote(id, msg, show) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.textContent    = msg;
-        el.style.display  = show ? 'block' : 'none';
-    }
-
-    function fmt(num) {
-        return '\u00a3' + num.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+    // Initial calc
+    calculate();
 </script>
+
 
 </body>
 </html>
